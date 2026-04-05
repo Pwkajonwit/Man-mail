@@ -133,14 +133,14 @@ export default function Dashboard() {
     <div className={`animate-fade-in ${styles.dashboard}`}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>Email Operations Dashboard</h1>
-          <p className={styles.subtitle}>Monitor recent dispatch activity and access key sending tools.</p>
+          <h1 className={styles.title}>แดชบอร์ดจัดการอีเมล</h1>
+          <p className={styles.subtitle}>ตรวจสอบประวัติการส่งอีเมลและเข้าถึงเครื่องมือการทำงาน</p>
         </div>
         <Link href="/compose" className="btn-primary">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          New Email
+          เขียนอีเมลใหม่
         </Link>
       </header>
 
@@ -154,7 +154,7 @@ export default function Dashboard() {
                 </svg>
               </div>
               <h3 className={styles.statValue}>{filteredHistory.length}</h3>
-              <p className={styles.statLabel}>Total Emails Sent</p>
+              <p className={styles.statLabel}>จำนวนอีเมลที่ส่งแล้วทั้งหมด</p>
             </div>
           </section>
         </aside>
@@ -167,9 +167,9 @@ export default function Dashboard() {
               onChange={(e) => { setFilterRange(e.target.value as any); setCurrentPage(1); }}
               style={{ minWidth: '110px' }}
             >
-              <option value="all">Quick Range</option>
-              <option value="month">This Month</option>
-              <option value="week">This Week</option>
+              <option value="all">ช่วงเวลาด่ว่น</option>
+              <option value="month">เดือนนี้</option>
+              <option value="week">สัปดาห์นี้</option>
             </select>
 
             <div style={{ display: 'flex', gap: '0.2rem', alignItems: 'center' }}>
@@ -179,7 +179,7 @@ export default function Dashboard() {
                 value={startDate} 
                 onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }} 
               />
-              <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>to</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>ถึง</span>
               <input 
                 type="date" 
                 className={styles.filterDate} 
@@ -193,12 +193,12 @@ export default function Dashboard() {
             <input 
               type="text" 
               className={styles.searchBox} 
-              placeholder="Search recipient..." 
+              placeholder="ค้นหาผู้รับ..." 
               value={searchTo} 
               onChange={(e) => { setSearchTo(e.target.value); setCurrentPage(1); }} 
             />
             <button className={styles.previewButton} style={{ borderColor: 'transparent' }} onClick={() => { setFilterRange('all'); setStartDate(''); setEndDate(''); setSearchTo(''); setCurrentPage(1); }}>
-              Reset
+              รีเซ็ต
             </button>
           </div>
         </div>
@@ -206,25 +206,25 @@ export default function Dashboard() {
 
       <section className={styles.recentSection}>
         <div className={styles.sectionHeader} style={{ marginBottom: '0.5rem' }}>
-          <h2 className={styles.sectionTitle}>Email History</h2>
+          <h2 className={styles.sectionTitle}>ประวัติการส่งอีเมล</h2>
         </div>
 
         <div className={`card ${styles.tableCard}`}>
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Recipient</th>
-                <th>Subject</th>
-                <th>Date</th>
-                <th>Attachment</th>
-                <th>Status</th>
-                <th>Preview</th>
+                <th>ผู้รับ</th>
+                <th>หัวข้อ</th>
+                <th>วันที่</th>
+                <th>ไฟล์แนบ</th>
+                <th>สถานะ</th>
+                <th>ดูตัวอย่าง</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>Loading history...</td>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>กำลังโหลดประวัติ...</td>
                 </tr>
               ) : error ? (
                 <tr>
@@ -232,7 +232,7 @@ export default function Dashboard() {
                 </tr>
               ) : history.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>No logs found in 'History' sheet.</td>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>ไม่พบข้อมูลในชีท 'History'</td>
                 </tr>
               ) : currentData.map((log, i) => {
                 const attachmentLinks = getAttachmentLinks(log.Attachment_URL || '')
@@ -251,7 +251,7 @@ export default function Dashboard() {
                     <td>
                       {attachmentLinks.length > 0 ? (
                         <a href={attachmentLinks[0]} target="_blank" rel="noreferrer" style={{ color: 'var(--primary)', textDecoration: 'underline' }}>
-                          {attachmentLinks.length > 1 ? `View Files (${attachmentLinks.length})` : 'View File'}
+                          {attachmentLinks.length > 1 ? `ดูไฟล์ (${attachmentLinks.length})` : 'ดูไฟล์'}
                         </a>
                       ) : '-'}
                     </td>
@@ -267,7 +267,7 @@ export default function Dashboard() {
                         onClick={() => setSelectedEmail(log)}
                         disabled={!log.Body_HTML}
                       >
-                        Preview
+                        ดูตัวอย่าง
                       </button>
                     </td>
                   </tr>
@@ -284,17 +284,17 @@ export default function Dashboard() {
               disabled={currentPage === 1} 
               onClick={() => setCurrentPage(p => p - 1)}
             >
-              Previous
+              ก่อนหน้า
             </button>
             <span className={styles.pageInfo}>
-              Page {currentPage} of {totalPages}
+              หน้า {currentPage} จาก {totalPages}
             </span>
             <button 
               className={styles.paginationBtn}
               disabled={currentPage === totalPages} 
               onClick={() => setCurrentPage(p => p + 1)}
             >
-              Next
+              ถัดไป
             </button>
           </div>
         )}
@@ -305,31 +305,31 @@ export default function Dashboard() {
           <div className={styles.modalCard} onClick={(event) => event.stopPropagation()}>
             <div className={styles.modalHeader}>
               <div>
-                <h3 className={styles.modalTitle}>Email Preview</h3>
-                <p className={styles.modalSubtitle}>{selectedEmail.Subject || 'No subject'}</p>
+                <h3 className={styles.modalTitle}>ตัวอย่างอีเมล</h3>
+                <p className={styles.modalSubtitle}>{selectedEmail.Subject || 'ไม่มีหัวข้อ'}</p>
               </div>
               <button type="button" className={styles.modalClose} onClick={() => setSelectedEmail(null)}>
-                Close
+                ปิดหน้าต่าง
               </button>
             </div>
 
             <div className={styles.modalMeta}>
-              <div><strong>To:</strong> {selectedEmail.To || '-'}</div>
-              <div><strong>CC:</strong> {selectedEmail.CC || '-'}</div>
-              <div><strong>Sent:</strong> {selectedEmail.Date ? new Date(selectedEmail.Date).toLocaleString() : '-'}</div>
+              <div><strong>ถึง:</strong> {selectedEmail.To || '-'}</div>
+              <div><strong>สำเนา (CC):</strong> {selectedEmail.CC || '-'}</div>
+              <div><strong>วันที่ส่ง:</strong> {selectedEmail.Date ? new Date(selectedEmail.Date).toLocaleString() : '-'}</div>
             </div>
 
             {selectedAttachments.length > 0 && (
               <div className={styles.attachmentList}>
                 {selectedAttachments.map((link, index) => (
                   <a key={`${link}-${index}`} href={link} target="_blank" rel="noreferrer" className={styles.attachmentPill}>
-                    Attachment {index + 1}
+                    ไฟล์แนบ {index + 1}
                   </a>
                 ))}
               </div>
             )}
 
-            <div className={styles.previewFrame} dangerouslySetInnerHTML={{ __html: selectedEmail.Body_HTML || '<p>No preview available.</p>' }} />
+            <div className={styles.previewFrame} dangerouslySetInnerHTML={{ __html: selectedEmail.Body_HTML || '<p>ไม่มีตัวอย่างแสดงผล</p>' }} />
           </div>
         </div>
       )}

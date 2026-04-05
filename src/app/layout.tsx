@@ -101,8 +101,7 @@ export default function RootLayout({
         <div className={styles.appContainer}>
           <nav className={styles.sidebar}>
             <div className={styles.sidebarHeader}>
-              <div className={styles.logo}>ระบบจัดการอีเมล</div>
-              <div className={styles.logoSub}>Email Management</div>
+              <div className={styles.logo}>ระบบจัดการอีเมล (MAN)</div>
             </div>
             <div className={styles.navLinks}>
               {navigationItems.map((item) => (
@@ -110,7 +109,6 @@ export default function RootLayout({
                   <span className={styles.iconWrap}>{item.icon}</span>
                   <span className={styles.navText}>
                     <span className={styles.navTitle}>{item.title}</span>
-                    <span className={styles.navSubTitle}>{item.subtitle}</span>
                   </span>
                 </Link>
               ))}
@@ -120,7 +118,6 @@ export default function RootLayout({
                 <div className={styles.avatar}>A</div>
                 <div className={styles.userInfo}>
                   <div className={styles.userName}>ผู้ดูแลระบบ</div>
-                  <div className={styles.userSubName}>Administrator</div>
                 </div>
               </div>
             </div>

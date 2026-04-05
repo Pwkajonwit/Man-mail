@@ -104,24 +104,24 @@ export default function Contacts() {
     <div className={`animate-fade-in ${styles.container}`}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>Contacts</h1>
-          <p className={styles.subtitle}>Manage your email recipients.</p>
+          <h1 className={styles.title}>รายชื่อผู้ติดต่อ</h1>
+          <p className={styles.subtitle}>จัดการรายชื่อผู้รับอีเมลและข้อมูลพื้นฐาน</p>
         </div>
         <button className="btn-primary" onClick={() => handleOpenForm()}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          Add Contact
+          เพิ่มผู้ติดต่อใหม่
         </button>
       </header>
 
       {/* Inline Form Card */}
       {isFormOpen && (
         <form onSubmit={handleSave} className={`card animate-fade-in`} style={{ marginBottom: '1.5rem' }}>
-          <h3 style={{ marginBottom: '1rem', fontWeight: 600 }}>{formData.id ? 'Edit Contact' : 'New Contact'}</h3>
+          <h3 style={{ marginBottom: '1rem', fontWeight: 600 }}>{formData.id ? 'แก้ไขข้อมูลผู้ติดต่อ' : 'เพิ่มผู้ติดต่อใหม่'}</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
             <div>
-              <label className="label">Name</label>
+              <label className="label">ชื่อ-นามสกุล</label>
               <input type="text" className="input-field" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
             </div>
             <div>
@@ -129,20 +129,20 @@ export default function Contacts() {
               <input type="email" className="input-field" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
             </div>
             <div>
-              <label className="label">Department</label>
+              <label className="label">ฝ่าย / แผนก</label>
               <input type="text" className="input-field" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} />
             </div>
             <div>
-              <label className="label">Status</label>
+              <label className="label">สถานะการใช้งาน</label>
               <select className="input-field" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}>
-                <option>Active</option>
-                <option>Inactive</option>
+                <option>ใช้งาน</option>
+                <option>ระงับใช้</option>
               </select>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-            <button type="button" className="btn-primary" style={{ background: 'transparent', color: 'var(--muted)', borderColor: 'var(--border)' }} onClick={() => setIsFormOpen(false)}>Cancel</button>
-            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Saving...' : 'Save Contact'}</button>
+            <button type="button" className="btn-primary" style={{ background: 'transparent', color: 'var(--muted)', borderColor: 'var(--border)' }} onClick={() => setIsFormOpen(false)}>ยกเลิก</button>
+            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'กำลังบันทึก...' : 'บันทึกข้อมูล'}</button>
           </div>
         </form>
       )}
@@ -151,7 +151,7 @@ export default function Contacts() {
         {loading ? (
           <div className={styles.loadingState}>
             <div className={styles.spinner}></div>
-            <p>Loading contacts...</p>
+            <p>กำลังโหลดข้อมูลผู้ติดต่อ...</p>
           </div>
         ) : error ? (
           <div className={styles.loadingState}>
@@ -159,17 +159,17 @@ export default function Contacts() {
           </div>
         ) : contacts.length === 0 ? (
            <div className={styles.loadingState}>
-             <p>No contacts found.</p>
-             <button className="btn-primary" onClick={() => handleOpenForm()}>Add First Contact</button>
+             <p>ไม่มีข้อมูลรายชื่อผู้ติดต่อ</p>
+             <button className="btn-primary" onClick={() => handleOpenForm()}>เพิ่มผู้ติดต่อคนแรก</button>
            </div>
         ) : (
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Status</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th>ฝ่าย / แผนก</th>
+                <th>สถานะ</th>
+                <th style={{ textAlign: 'right' }}>จัดการ</th>
               </tr>
             </thead>
             <tbody>

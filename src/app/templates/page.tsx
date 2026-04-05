@@ -150,14 +150,14 @@ export default function Templates() {
     <div className={`animate-fade-in ${styles.container}`}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>Email Templates</h1>
-          <p className={styles.subtitle}>Create reusable email formats with line breaks, signature details, and image support.</p>
+          <h1 className={styles.title}>แม่แบบอีเมล</h1>
+          <p className={styles.subtitle}>สร้างแม่แบบอีเมลที่นำกลับมาใช้ใหม่ได้ พร้อมรองรับการจัดรูปแบบ ลายเซ็น และรูปภาพ</p>
         </div>
         <button className="btn-primary" onClick={() => handleOpenForm()}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          New Template
+          เพิ่มแม่แบบใหม่
         </button>
       </header>
 
@@ -170,7 +170,7 @@ export default function Templates() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
               <div>
-                <label className="label">Template Title</label>
+                <label className="label">ชื่อแม่แบบอีเมล (Template Title)</label>
                 <input
                   type="text"
                   className="input-field"
@@ -181,7 +181,7 @@ export default function Templates() {
                 />
               </div>
               <div>
-                <label className="label">Email Subject</label>
+                <label className="label">หัวข้ออีเมล (Email Subject)</label>
                 <input
                   type="text"
                   className="input-field"
@@ -194,7 +194,7 @@ export default function Templates() {
             </div>
 
             <div style={{ marginBottom: '1rem' }}>
-              <label className="label">Message Body</label>
+              <label className="label">เนื้อหาข้อความ</label>
               <textarea
                 className="input-field"
                 rows={8}
@@ -210,13 +210,13 @@ export default function Templates() {
 
             <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
               <div style={{ marginBottom: '1rem' }}>
-                <label className="label">Select Signature / Image</label>
+                <label className="label">เลือกลายเซ็นต์ / รูปภาพแนบท้าย</label>
                 <select 
                   className="input-field" 
                   value={signatures.find(s => s.name === formData.signature_name)?.id || ''}
                   onChange={(e) => handleSelectSignature(e.target.value)}
                 >
-                  <option value="">-- No Signature --</option>
+                  <option value="">-- ไม่ใช้ลายเซ็นต์ --</option>
                   {signatures.map(sig => (
                     <option key={sig.id} value={sig.id}>{sig.name}</option>
                   ))}
@@ -239,10 +239,10 @@ export default function Templates() {
 
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
               <button type="button" className="btn-primary" style={{ background: 'transparent', color: 'var(--muted)', borderColor: 'var(--border)' }} onClick={() => setIsFormOpen(false)}>
-                Cancel
+                ยกเลิก
               </button>
               <button type="submit" className="btn-primary" disabled={saving}>
-                {saving ? 'Saving...' : 'Save Template'}
+                {saving ? 'กำลังบันทึก...' : 'บันทึกแม่แบบ'}
               </button>
             </div>
           </form>
@@ -253,7 +253,7 @@ export default function Templates() {
         {loading ? (
           <div className={styles.loadingState}>
             <div className={styles.spinner}></div>
-            <p>Loading templates...</p>
+            <p>กำลังโหลดข้อมูลแม่แบบ...</p>
           </div>
         ) : error ? (
           <div className={styles.loadingState}>
@@ -261,16 +261,16 @@ export default function Templates() {
           </div>
         ) : templates.length === 0 ? (
           <div className={styles.loadingState}>
-            <p>No templates found.</p>
-            <button className="btn-primary" onClick={() => handleOpenForm()}>Create First Template</button>
+            <p>ไม่พบข้อมูลแม่แบบอีเมล</p>
+            <button className="btn-primary" onClick={() => handleOpenForm()}>เริ่มสร้างแม่แบบแรก</button>
           </div>
         ) : (
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Title & Subject</th>
-                <th>Preview</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th>ชื่อแม่แบบและหัวข้อ</th>
+                <th>ตัวอย่างเนื้อหา</th>
+                <th style={{ textAlign: 'right' }}>จัดการ</th>
               </tr>
             </thead>
             <tbody>

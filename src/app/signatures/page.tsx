@@ -111,35 +111,35 @@ export default function Signatures() {
     <div className={`animate-fade-in ${styles.container}`}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>Signatures & Images</h1>
-          <p className={styles.subtitle}>Manage your email signatures and reusable images.</p>
+          <h1 className={styles.title}>ลายเซ็นและรูปภาพ</h1>
+          <p className={styles.subtitle}>จัดการลายเซ็นอีเมลและรูปภาพสำหรับการใช้งานซ้ำในแม่แบบ</p>
         </div>
         <button className="btn-primary" onClick={() => handleOpenForm()}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          Add Signature
+          เพิ่มลายเซ็นใหม่
         </button>
       </header>
 
       {isFormOpen && (
         <form onSubmit={handleSave} className="card animate-fade-in" style={{ marginBottom: '1.5rem' }}>
-          <h3 style={{ marginBottom: '1rem', fontWeight: 600 }}>{formData.id ? 'Edit Signature' : 'New Signature'}</h3>
+          <h3 style={{ marginBottom: '1rem', fontWeight: 600 }}>{formData.id ? 'แก้ไขข้อมูลลายเซ็น' : 'เพิ่มลายเซ็นใหม่'}</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
             <div>
-              <label className="label">Signature Name (Placeholder)</label>
+              <label className="label">ชื่อเรียกรายเซ็น (สำหรับอ้างอิง)</label>
               <input type="text" className="input-field" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. CEO Signature" />
             </div>
             <div>
-              <label className="label">Job Title</label>
+              <label className="label">ตำแหน่งงาน</label>
               <input type="text" className="input-field" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
             </div>
             <div>
-              <label className="label">Company</label>
+              <label className="label">บริษัท / หน่วยงาน</label>
               <input type="text" className="input-field" value={formData.company} onChange={e => setFormData({...formData, company: e.target.value})} />
             </div>
             <div>
-              <label className="label">Phone</label>
+              <label className="label">เบอร์โทรศัพท์</label>
               <input type="text" className="input-field" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
             </div>
             <div>
@@ -147,13 +147,13 @@ export default function Signatures() {
               <input type="email" className="input-field" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
             </div>
             <div>
-              <label className="label">Image URL</label>
+              <label className="label">ที่อยู่รูปภาพ (URL)</label>
               <input type="text" className="input-field" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} placeholder="https://..." />
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-            <button type="button" className="btn-primary" style={{ background: 'transparent', color: 'var(--muted)', borderColor: 'var(--border)' }} onClick={() => setIsFormOpen(false)}>Cancel</button>
-            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'Saving...' : 'Save Signature'}</button>
+            <button type="button" className="btn-primary" style={{ background: 'transparent', color: 'var(--muted)', borderColor: 'var(--border)' }} onClick={() => setIsFormOpen(false)}>ยกเลิก</button>
+            <button type="submit" className="btn-primary" disabled={saving}>{saving ? 'กำลังบันทึก...' : 'บันทึกข้อมูลลายเซ็น'}</button>
           </div>
         </form>
       )}

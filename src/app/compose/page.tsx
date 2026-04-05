@@ -221,8 +221,8 @@ export default function ComposeEmail() {
     <div className={`animate-fade-in ${styles.container}`}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>Compose Email</h1>
-          <p className={styles.subtitle}>Select a template, adjust the content, and preview the final email before sending.</p>
+          <h1 className={styles.title}>เขียนและส่งอีเมล</h1>
+          <p className={styles.subtitle}>เลือกแม่แบบอีเมล ปรับแต่งเนื้อหา และตรวจสอบความถูกต้องก่อนกดส่ง</p>
         </div>
       </header>
 
@@ -238,7 +238,7 @@ export default function ComposeEmail() {
               </span>
             ) : (
               <>
-                ยืนยันและส่งอีเมล (Send Email)
+                ยืนยันและส่งอีเมล
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
@@ -259,7 +259,7 @@ export default function ComposeEmail() {
         <div className={styles.pageGrid}>
           <div className={styles.formCol}>
             <div className={styles.formSection}>
-              <div className={styles.sectionTitle}>1. ข้อมูลพื้นฐาน & แม่แบบ (Basic Info)</div>
+              <div className={styles.sectionTitle}>1. ข้อมูลพื้นฐานและแม่แบบ</div>
               <div className={styles.formGroup} style={{ marginBottom: 0 }}>
                 <label className="label">แม่แบบอีเมล (Template)</label>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -284,7 +284,7 @@ export default function ComposeEmail() {
             </div>
 
             <div className={styles.formSection}>
-              <div className={styles.sectionTitle}>2. ผู้รับอีเมล (Recipients)</div>
+              <div className={styles.sectionTitle}>2. ข้อมูลผู้รับ</div>
               <div className={styles.grid2}>
                 <div className={styles.formGroup}>
                   <label className="label">ถึง (To) <span className={styles.required}>*</span></label>
@@ -317,7 +317,7 @@ export default function ComposeEmail() {
             </div>
 
             <div className={styles.formSection}>
-              <div className={styles.sectionTitle}>3. เนื้อหาอีเมล (Message Content)</div>
+              <div className={styles.sectionTitle}>3. เนื้อหาอีเมล</div>
               <div className={styles.formGroup}>
                 <label className="label">หัวข้อ (Subject) <span className={styles.required}>*</span></label>
                 <input
@@ -344,7 +344,7 @@ export default function ComposeEmail() {
 
             <div className={styles.grid2}>
               <div className={styles.formSection}>
-                <div className={styles.sectionTitle}>4. ลายเซ็น (Signature)</div>
+                <div className={styles.sectionTitle}>4. ลายเซ็น</div>
                 <div className={styles.formGroup} style={{ marginBottom: 0 }}>
                   <label className="label">เลือกลายเซ็น</label>
                   <select className="input-field" onChange={handleSignatureSelect} value={selectedSignatureId}>
@@ -359,7 +359,7 @@ export default function ComposeEmail() {
               </div>
 
               <div className={styles.formSection}>
-                <div className={styles.sectionTitle}>5. แนบไฟล์ (Attachments)</div>
+                <div className={styles.sectionTitle}>5. ไฟล์แนบ</div>
                 <div className={styles.fileUploadBox}>
                   <input type="file" multiple className={styles.fileInput} id="file-upload" onChange={handleFileChange} />
                   <label htmlFor="file-upload" className={styles.fileUploadLabel} style={{ padding: '0.75rem', height: 'auto', flexDirection: 'row', gap: '0.5rem' }}>
@@ -404,7 +404,7 @@ export default function ComposeEmail() {
 
           <div className={styles.previewCol}>
             <div className={styles.previewCard} style={{ marginTop: 0 }}>
-              <div className={styles.previewHeader}>Email Preview (ตรวจสอบเนื้อหา)</div>
+              <div className={styles.previewHeader}>ตัวอย่างอีเมล (ตรวจสอบก่อนส่ง)</div>
               <div className={styles.previewBody} style={{ backgroundColor: '#fff', fontSize: '14px', lineHeight: '1.6' }} dangerouslySetInnerHTML={{ __html: previewHtml }} />
             </div>
           </div>
