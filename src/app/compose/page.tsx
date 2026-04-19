@@ -8,11 +8,28 @@ import {
   type EmailTemplateRecord,
 } from '@/lib/email-template'
 import { fetchGasJson } from '@/lib/gas-client'
+import {
+  formatBytes,
+  getMaxAttachmentBytes,
+  isBlockedAttachmentName,
+} from '@/lib/attachments'
 
 interface Contact {
   name: string;
   email: string;
 }
+
+interface SignatureRecord {
+  id?: string;
+  name?: string;
+  title?: string;
+  company?: string;
+  phone?: string;
+  email?: string;
+  image_url?: string;
+}
+
+const MAX_ATTACHMENT_BYTES = getMaxAttachmentBytes()
 
 export default function ComposeEmail() {
   const [to, setTo] = useState('')
@@ -28,10 +45,11 @@ export default function ComposeEmail() {
   const [files, setFiles] = useState<File[]>([])
   const [selectedTemplateId, setSelectedTemplateId] = useState('')
   const [selectedSignatureId, setSelectedSignatureId] = useState('')
-  const [signatures, setSignatures] = useState<any[]>([])
+  const [signatures, setSignatures] = useState<SignatureRecord[]>([])
   const [templates, setTemplates] = useState<EmailTemplateRecord[]>([])
   const [contacts, setContacts] = useState<Contact[]>([])
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+  const [statusMessage, setStatusMessage] = useState('')
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [loadError, setLoadError] = useState('')
 
@@ -48,7 +66,7 @@ export default function ComposeEmail() {
         const [templateResponse, contactResponse, signatureResponse] = await Promise.all([
           fetchGasJson<EmailTemplateRecord[]>('/api/gas?action=getTemplates'),
           fetchGasJson<Contact[]>('/api/gas?action=getContacts'),
-          fetchGasJson<any[]>('/api/gas?action=getSignatures'),
+          fetchGasJson<SignatureRecord[]>('/api/gas?action=getSignatures'),
         ])
 
         if (templateResponse.status === 'success') {
@@ -76,15 +94,6 @@ export default function ComposeEmail() {
 
     fetchData()
   }, [])
-
-  const hasSignatureOrImageValues = Boolean(
-    signatureName ||
-    signatureTitle ||
-    signatureCompany ||
-    signaturePhone ||
-    signatureEmail ||
-    imageUrl
-  )
 
   const applyTemplate = (template: EmailTemplateRecord) => {
     setSelectedTemplateId(template.id ?? '')
@@ -136,7 +145,17 @@ export default function ComposeEmail() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const selectedFiles = Array.from(event.target.files)
-      setFiles((previous) => [...previous, ...selectedFiles])
+      const nextFiles = [...files, ...selectedFiles]
+      const validationError = validateFiles(nextFiles)
+      if (validationError) {
+        setStatus('error')
+        setStatusMessage(validationError)
+        alert(validationError)
+      } else {
+        setStatus('idle')
+        setStatusMessage('')
+        setFiles(nextFiles)
+      }
     }
     event.target.value = ''
   }
@@ -146,14 +165,34 @@ export default function ComposeEmail() {
   }
 
   const fileToBase64 = (file: File): Promise<string> =>
-    new Promise((resolve) => {
+    new Promise((resolve, reject) => {
       const reader = new FileReader()
-      reader.onloadend = () => {
-        const result = reader.result as string
-        resolve(result.split(',')[1])
+      reader.onerror = () => reject(new Error(`Could not read file: ${file.name}`))
+      reader.onload = () => {
+        const result = typeof reader.result === 'string' ? reader.result : ''
+        const [, base64] = result.split(',')
+        if (!base64 && file.size > 0) {
+          reject(new Error(`Could not encode file: ${file.name}`))
+          return
+        }
+        resolve(base64 || '')
       }
       reader.readAsDataURL(file)
     })
+
+  const validateFiles = (nextFiles: File[]) => {
+    const totalBytes = nextFiles.reduce((sum, file) => sum + file.size, 0)
+    if (totalBytes > MAX_ATTACHMENT_BYTES) {
+      return `Selected attachments total ${formatBytes(totalBytes)}. Limit is ${formatBytes(MAX_ATTACHMENT_BYTES)}.`
+    }
+
+    const blockedFile = nextFiles.find((file) => isBlockedAttachmentName(file.name))
+    if (blockedFile) {
+      return `Gmail blocks this attachment type: ${blockedFile.name}. Use a PDF/image/document file or share a Drive link instead.`
+    }
+
+    return ''
+  }
 
   const previewHtml = buildEmailHtml({
     body,
@@ -167,7 +206,16 @@ export default function ComposeEmail() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+    const validationError = validateFiles(files)
+    if (validationError) {
+      setStatus('error')
+      setStatusMessage(validationError)
+      alert(validationError)
+      return
+    }
+
     setStatus('sending')
+    setStatusMessage('')
 
     try {
       const encodedFiles = await Promise.all(
@@ -180,6 +228,9 @@ export default function ComposeEmail() {
 
       const data = await fetchGasJson('/api/gas', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=UTF-8',
+        },
         body: JSON.stringify({
           action: 'sendEmail',
           to,
@@ -193,6 +244,7 @@ export default function ComposeEmail() {
       if (data.status === 'success') {
         const emptyTemplate = createEmptyTemplate()
         setStatus('success')
+        setStatusMessage('')
         setTo('')
         setCc('')
         setSubject('')
@@ -207,13 +259,17 @@ export default function ComposeEmail() {
         setFiles([])
         setSelectedTemplateId('')
       } else {
+        const message = data.message || 'Failed to send email'
         setStatus('error')
-        alert(data.message || 'Failed to send email')
+        setStatusMessage(message)
+        alert(message)
       }
     } catch (error) {
       console.error(error)
+      const message = error instanceof Error ? error.message : 'Failed to send email'
       setStatus('error')
-      alert(error instanceof Error ? error.message : 'Failed to send email')
+      setStatusMessage(message)
+      alert(message)
     }
   }
 
@@ -253,6 +309,15 @@ export default function ComposeEmail() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
             ส่งอีเมลสำเร็จและบันทึกในประวัติแล้ว
+          </div>
+        )}
+
+        {status === 'error' && statusMessage && (
+          <div className={styles.toastError}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+            {statusMessage}
           </div>
         )}
 
@@ -371,8 +436,14 @@ export default function ComposeEmail() {
                     </div>
                   </label>
                 </div>
+                <p className={styles.sectionHint}>
+                  Limit {formatBytes(MAX_ATTACHMENT_BYTES)} total. Some executable or installer file types are blocked by Gmail.
+                </p>
                 {files.length > 0 && (
                   <div style={{ marginTop: '0.5rem', borderTop: '1px solid var(--border)', paddingTop: '0.5rem' }}>
+                    <p className={styles.sectionHint} style={{ marginBottom: '0.4rem' }}>
+                      Total {formatBytes(files.reduce((sum, file) => sum + file.size, 0))}
+                    </p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
                       {files.map((file, index) => (
                         <div
@@ -387,7 +458,9 @@ export default function ComposeEmail() {
                             fontSize: '0.65rem',
                           }}
                         >
-                          <span style={{ maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
+                          <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {file.name} ({formatBytes(file.size)})
+                          </span>
                           <button type="button" onClick={() => removeFile(index)} style={{ color: 'var(--error)', padding: '0.1rem' }}>
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

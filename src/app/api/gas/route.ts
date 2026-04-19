@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  formatBytes,
+  getEstimatedJsonPayloadBytes,
+  getMaxAttachmentBytes,
+} from '@/lib/attachments';
+
+const MAX_PROXY_BODY_BYTES = getEstimatedJsonPayloadBytes(getMaxAttachmentBytes());
 
 function getGasUrl() {
   const url = process.env.NEXT_PUBLIC_GAS_URL;
@@ -37,12 +44,35 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const contentLength = Number(request.headers.get('content-length') || 0);
+    if (contentLength > MAX_PROXY_BODY_BYTES) {
+      return NextResponse.json(
+        {
+          status: 'error',
+          message: `Request is too large (${formatBytes(contentLength)}). Attachment payload limit is ${formatBytes(MAX_PROXY_BODY_BYTES)}.`,
+        },
+        { status: 413 }
+      );
+    }
+
+    const body = await request.text();
+    const bodyBytes = new TextEncoder().encode(body).byteLength;
+    if (bodyBytes > MAX_PROXY_BODY_BYTES) {
+      return NextResponse.json(
+        {
+          status: 'error',
+          message: `Request is too large (${formatBytes(bodyBytes)}). Attachment payload limit is ${formatBytes(MAX_PROXY_BODY_BYTES)}.`,
+        },
+        { status: 413 }
+      );
+    }
+
     const upstreamResponse = await fetch(getGasUrl(), {
       method: 'POST',
       headers: {
-        'Content-Type': request.headers.get('content-type') || 'text/plain;charset=UTF-8',
+        'Content-Type': 'text/plain;charset=UTF-8',
       },
-      body: await request.text(),
+      body,
       cache: 'no-store',
     });
 
