@@ -20,17 +20,25 @@ export async function fetchGasJson<T = unknown>(
   const text = await response.text();
   const contentType = response.headers.get('content-type') || '';
 
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status} ${response.statusText}`);
-  }
-
   if (contentType.includes('application/json')) {
-    return JSON.parse(text) as GasResponse<T>;
+    const json = JSON.parse(text) as GasResponse<T>;
+    if (!response.ok) {
+      throw new Error(json.message || `Request failed: ${response.status} ${response.statusText}`);
+    }
+    return json;
   }
 
   const trimmed = text.trim();
   if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
-    return JSON.parse(trimmed) as GasResponse<T>;
+    const json = JSON.parse(trimmed) as GasResponse<T>;
+    if (!response.ok) {
+      throw new Error(json.message || `Request failed: ${response.status} ${response.statusText}`);
+    }
+    return json;
+  }
+
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status} ${response.statusText}. ${trimmed.slice(0, 140)}`);
   }
 
   if (trimmed.startsWith('<!DOCTYPE') || trimmed.startsWith('<html')) {
